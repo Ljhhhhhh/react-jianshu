@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^3.13.2",
     "axios": "^0.18.0",
     "mockjs": "^1.0.1-beta3",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "react-scripts": "2.1.4"
+    "react-scripts": "2.1.4",
+    "react-transition-group": "^2.5.3",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.1",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

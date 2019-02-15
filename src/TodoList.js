@@ -1,122 +1,70 @@
-import React, { Component, Fragment } from "react";
-import TodoItem from "./TodoItem";
+import React, { Component } from "react";
+import "antd/dist/antd.css";
+import store from "./store/";
+import {
+  getInputChangeAction,
+  getAddTodoItem,
+  getDeleteTodoItem,
+  getInitList
+} from "./store/actionCreators";
+import TodoListUI from "./TodoListUI";
 import axios from "axios";
-import "./style.css";
 
 class TodoList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      inputValue: "",
-      list: []
-    };
+    this.state = store.getState();
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleBtnClick = this.handleBtnClick.bind(this);
-    this.handleItemDelete = this.handleItemDelete.bind(this);
-  }
-
-  handleInputChange(e) {
-    const value = e.target.value;
-    // const value = this.input.value;
-    this.setState(() => ({
-      inputValue: value
-    }));
-    // this.setState({
-    //   inputValue: e.target.value
-    // });
-  }
-
-  handleBtnClick() {
-    this.setState(prevState => ({
-      list: [...prevState.list, prevState.inputValue],
-      inputValue: ""
-    }));
-    // this.setState({
-    //   list: [...this.state.list, this.state.inputValue],
-    //   inputValue: ""
-    // });
-  }
-
-  handleItemDelete(index) {
-    this.setState(prevState => {
-      const list = [...prevState.list];
-      list.splice(index, 1);
-      return { list };
-    });
-    // this.setState({
-    //   list
-    // });
-  }
-
-  getTodoItem() {
-    return this.state.list.map((item, index) => {
-      return (
-        <TodoItem
-          key={index}
-          content={item}
-          index={index}
-          deleteItem={this.handleItemDelete}
-        />
-      );
-    });
-  }
-  componentWillMount() {
-    console.log("1:componentWillMount");
-  }
-
-  componentDidMount() {
-    console.log("3:componentDidMount");
-    axios
-      .get("/api/todolist", { dataType: "json" })
-      .then(res => {
-        this.setState(() => {
-          return {
-            list: [...res.data]
-          };
-        });
-        console.log("result", res.data);
-      })
-      .catch(() => {
-        console.log("error");
-      });
-  }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    console.log("4:shouldComponentUpdate");
-    return true;
-  }
-
-  componentWillUpdate() {
-    console.log("5:componentWillUpdate");
-  }
-
-  componentDidUpdate() {
-    console.log("6:componentDidUpdate");
+    this.handleStoreChange = this.handleStoreChange.bind(this);
+    this.handleAddItem = this.handleAddItem.bind(this);
+    // this.handleItemClick = this.handleItemClick.bind(this);
+    store.subscribe(this.handleStoreChange);
   }
 
   render() {
-    console.log("2:render");
     return (
-      <Fragment>
-        <div>
-          <label htmlFor="insertArea">输入内容</label>
-          <input
-            id="insertArea"
-            className="input"
-            value={this.state.inputValue}
-            onChange={this.handleInputChange}
-          />
-          <button onClick={this.handleBtnClick}>提交</button>
-        </div>
-        <ul
-          ref={ul => {
-            this.ul = ul;
-          }}
-        >
-          {this.getTodoItem()}
-        </ul>
-      </Fragment>
+      <TodoListUI
+        inputValue={this.state.inputValue}
+        handleInputChange={this.handleInputChange}
+        handleAddItem={this.handleAddItem}
+        list={this.state.list}
+        handleItemClick={this.handleItemClick}
+      />
     );
+  }
+  componentDidMount() {
+    // const action = getTodoList();
+    const action = getInitList();
+    store.dispatch(action);
+    // axios
+    //   .get("/api/todolist")
+    //   .then(res => {
+    //     const data = res.data;
+    //     const action = initListAction(data);
+    //     store.dispatch(action);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+  }
+
+  handleItemClick(index) {
+    const action = getDeleteTodoItem(index);
+    store.dispatch(action);
+  }
+
+  handleInputChange(e) {
+    const action = getInputChangeAction(e.target.value);
+    store.dispatch(action);
+  }
+
+  handleAddItem() {
+    const action = getAddTodoItem();
+    store.dispatch(action);
+  }
+
+  handleStoreChange() {
+    this.setState(store.getState());
   }
 }
 
