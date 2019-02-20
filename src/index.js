@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import TodoList from "./TodoList";
-import { Provider } from "react-redux";
-import store from "./store";
-
-const App = (
-  <Provider store={store}>
-    <TodoList />
-  </Provider>
+import { GlobalStyle } from "./style.js";
+import { GlobalFontIcon } from "./statics/iconfont/iconfont";
+import App from "./App";
+const ABC = (
+  <div>
+    <GlobalStyle />
+    <GlobalFontIcon />
+    <App />
+  </div>
 );
-
-ReactDOM.render(App, document.getElementById("root"));
+ReactDOM.render(ABC, document.getElementById("root"));
