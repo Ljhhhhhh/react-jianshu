@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { HomeWrapper, HomeLeft, HomeRight } from "./style";
+import React, { PureComponent } from "react";
+import { HomeWrapper, HomeLeft, HomeRight, BackTop } from "./style";
 import Topic from "./components/Topic";
 import Articles from "./components/Articles";
 import Recommend from "./components/Recommend";
@@ -7,12 +7,27 @@ import Writer from "./components/Writer";
 import { connect } from "react-redux";
 import { actionCreators } from "./store";
 
-class Home extends Component {
+class Home extends PureComponent {
+  componentDidMount() {
+    this.props.handleInputFocus();
+    this.bindEvents();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.props.changeScrollTopShow);
+  }
+
+  handleScrollTop() {
+    window.scrollTo(0, 0);
+  }
+
+  bindEvents() {
+    window.addEventListener("scroll", this.props.changeScrollTopShow);
+  }
+
   render() {
     const { topicList, recommendList, articleList, writerList } = this.props;
-    // const topicListJs = topicList.toJS();
-    // const recommendListJs = recommendList.toJS();
-    // const writerListJs = writerList.toJS();
+
     return (
       <HomeWrapper>
         <HomeLeft>
@@ -22,28 +37,27 @@ class Home extends Component {
             alt=""
           />
           <Topic list={topicList} />
-          {/* <Articles list={articleList} /> */}
+          <Articles list={articleList} />
         </HomeLeft>
         <HomeRight>
           <Recommend list={recommendList} />
           <Writer writerList={writerList} />
         </HomeRight>
+        {this.props.showScroll ? (
+          <BackTop onClick={this.handleScrollTop}>回到顶部</BackTop>
+        ) : null}
       </HomeWrapper>
     );
-  }
-
-  componentDidMount() {
-    this.props.handleInputFocus();
   }
 }
 
 const mapState = state => {
-  console.log(state.getIn(["home", "articleList"]).toJS());
   return {
     topicList: state.getIn(["home", "topicList"]),
     recommendList: state.getIn(["home", "recommendList"]),
     writerList: state.getIn(["home", "writerList"]),
-    articleList: state.getIn(["home", "articleList"])
+    articleList: state.getIn(["home", "articleList"]),
+    showScroll: state.getIn(["home", "showScroll"])
   };
 };
 
@@ -51,6 +65,13 @@ const mapDispatch = dispatch => {
   return {
     handleInputFocus() {
       dispatch(actionCreators.handleGetData());
+    },
+    changeScrollTopShow() {
+      if (document.documentElement.scrollTop > 100) {
+        dispatch(actionCreators.toggleShowScroll(true));
+      } else {
+        dispatch(actionCreators.toggleShowScroll(false));
+      }
     }
   };
 };

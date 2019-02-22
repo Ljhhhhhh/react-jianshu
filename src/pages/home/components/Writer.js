@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { WriterWrapper, WriterItem, WriterHeader } from "../style";
 import { connect } from "react-redux";
 import { actionCreators } from "../store";
 
-class Writer extends Component {
+class Writer extends PureComponent {
   render() {
     const { writerList, writerPage, changeList } = this.props;
     let currentList = [];
@@ -20,13 +20,12 @@ class Writer extends Component {
           <WriterItem key={jsWirterList[i].id}>
             <img src={jsWirterList[i].avatar_source} alt="" />
             <div className="info">
-              <h5> {jsWirterList[i].nickname} </h5>{" "}
+              <h5> {jsWirterList[i].nickname} </h5>
               <p>
-                {" "}
                 {jsWirterList[i].total_likes_count}
-                喜欢{" "}
-              </p>{" "}
-            </div>{" "}
+                喜欢
+              </p>
+            </div>
           </WriterItem>
         );
       }
@@ -34,16 +33,16 @@ class Writer extends Component {
     return (
       <WriterWrapper>
         <WriterHeader>
-          <span> 推荐作者 </span>{" "}
+          <span>推荐作者</span>
           <span
             className="btn"
             onClick={() => {
               changeList(writerPage, writeTotal, pageSize);
             }}>
-            换一批{" "}
-          </span>{" "}
-        </WriterHeader>{" "}
-        {currentList}{" "}
+            换一批
+          </span>
+        </WriterHeader>
+        {currentList}
       </WriterWrapper>
     );
   }
